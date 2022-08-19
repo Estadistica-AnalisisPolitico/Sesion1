@@ -5,15 +5,19 @@ output:
     df_print: paged
 ---
 
-<center><img src="https://github.com/PoliticayGobiernoPUCP/estadistica_anapol2/raw/master/PICS/LOGO_PUCP.png" width="500"></center>
+<center><img src="https://github.com/Estadistica-AnalisisPolitico/Images/raw/main/LogoEAP.png" width="500"></center>
 
-<center> <header><h1>ESTADISTICA PARA EL ANALISIS POLITICO II</h1>  </header></center>
 
-* Profesor:  <a href="http://www.pucp.edu.pe/profesor/jose-manuel-magallanes/" target="_blank">Dr. José Manuel Magallanes, Ph.D.</a> <br>
-    - Profesor del Departamento de Ciencias Sociales, Sección de Ciencia Política y Gobierno.
-    - [Oficina 105](https://goo.gl/maps/xuGeG6o9di1i1y5m6) - Edificio CISEPA / ECONOMIA / CCSS
-    - Telefono: (51) 1 - 6262000 anexo 4302
-    - Correo Electrónico: [jmagallanes@pucp.edu.pe](mailto:jmagallanes@pucp.edu.pe)
+
+Profesor:  <a href="http://www.pucp.edu.pe/profesor/jose-manuel-magallanes/" target="_blank">Dr. José Manuel MAGALLANES REYES, Ph.D.</a> <br>
+
+- Profesor del Departamento de Ciencias Sociales, Sección de Ciencia Política y Gobierno.
+
+- [Oficina 105](https://goo.gl/maps/xuGeG6o9di1i1y5m6) - Edificio CISEPA / ECONOMIA / CCSS
+
+- Telefono: (51) 1 - 6262000 anexo 4302
+
+- Correo Electrónico: [jmagallanes@pucp.edu.pe](mailto:jmagallanes@pucp.edu.pe)
     
 
 <a id='beginning'></a>
@@ -24,7 +28,7 @@ ____
 <center> <header><h2>Regresión Lineal Multivariada (I)</h2>  </header></center>
 ____
 
-## El _Pipeline_ del Analísta Político
+## El _Pipeline_ del Analista Político
 
 De manera abstracta podemos ver que Los analistas existen para brindar __explicaciones__ y __recomendaciones__ sobre algún asunto de interés. El _decisor_ elije el curso de acción sabiendo que no puede esperar del analista información completa. El _gestor_ se encarga de implementar  las decisiones; esa implementación traerá nueva información y el analista vuelve a su trabajo.
 
@@ -81,10 +85,10 @@ Trabajemos con estos datos:
 ```{r, warning=FALSE, message=FALSE, echo=TRUE}
 
 library(rio)
-topCloud='https://github.com/PoliticayGobiernoPUCP/'
-courseCloud='estadistica_anapol2/raw/master/DATA/'
-fileCloud='hsb_ok.xlsx'
-hsb=import(paste0(topCloud,courseCloud,fileCloud))
+organization='https://github.com/Estadistica-AnalisisPolitico'
+repo='/DataFiles-estadistica/raw/main/'
+file='hsb_ok.xlsx'
+hsb=import(paste0(organization,repo,file))
 ```
 
 Antes de correr cualquier análisis estadístico, debes revisar como el tipo de datos que tu archivo trae es reconocido por el **R**:
