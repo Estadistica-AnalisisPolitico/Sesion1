@@ -3,6 +3,7 @@ title: "Sesión 1"
 output:
   html_document:
     df_print: paged
+doi: "10.5281/zenodo.7015029"
 ---
 
 <center><img src="https://github.com/Estadistica-AnalisisPolitico/Images/raw/main/LogoEAP.png" width="500"></center>
