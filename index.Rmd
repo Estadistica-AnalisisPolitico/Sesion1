@@ -3,7 +3,6 @@ title: "Sesión 1"
 output:
   html_document:
     df_print: paged
-doi: "https://doi.org/10.5281/zenodo.7015029"
 ---
 
 <center><img src="https://github.com/Estadistica-AnalisisPolitico/Images/raw/main/LogoEAP.png" width="500"></center>
@@ -27,6 +26,8 @@ Profesor:  <a href="http://www.pucp.edu.pe/profesor/jose-manuel-magallanes/" tar
 ____
 
 <center> <header><h2>Regresión Lineal Multivariada (I)</h2>  </header></center>
+<a href="https://doi.org/10.5281/zenodo.7015029"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7015029.svg" alt="DOI"></a>
+
 ____
 
 ## El _Pipeline_ del Analista Político
