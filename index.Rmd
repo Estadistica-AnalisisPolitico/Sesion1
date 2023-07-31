@@ -25,7 +25,7 @@ Profesor:  <a href="http://www.pucp.edu.pe/profesor/jose-manuel-magallanes/" tar
 
 ____
 
-<center> <header><h2>Regresión Lineal Multivariada (I)</h2>  </header></center>
+<center> <header><h2>La Ruta hacia la Regresión</h2>  </header></center>
 
 <center><a href="https://doi.org/10.5281/zenodo.7015029"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7015029.svg" alt="DOI"></a>
 </center>
@@ -36,48 +36,188 @@ ____
 
 De manera abstracta podemos ver que Los analistas existen para brindar __explicaciones__ y __recomendaciones__ sobre algún asunto de interés. El _decisor_ elije el curso de acción sabiendo que no puede esperar del analista información completa. El _gestor_ se encarga de implementar  las decisiones; esa implementación traerá nueva información y el analista vuelve a su trabajo.
 
-Para acabar este curso sintiéndote que vas en camino a ser analista político, te recomiendo seguir  estos pasos:
+La estadística es una ciencia matemática que guía científicamente el análisis de datos. Esto lo hace siguiendo una secuencia:
 
-1. Identificar algún patrón (no aleatorio)  en la complejidad del mundo, que afectan  los objetivos de las organizaciones: el problema. La identificación del problema depende de cómo entiendes al mundo, por lo que debes haber leído diversas teorías antes de aventurarte a identificar. 
+1. Apuesta por entender una variable que explicaría un problema de interés (narcotráfico, elecciones, etc). En esta etapa, hace exploración de los datos de esa variable, es decir, organiza los datos en medidas, tablas y gráficos. Se entiende que la variable de interés tiene una variabilidad tal que despierta en el analista la necesidad de preguntar por qué esa variabilidad.
 
-2. Estructurar lo identificado (el problema) en  preguntas de investigación.
-
-3. Revisar la literatura para saber qué _respuestas_ hayan dado otros investigadores al problema planteado.
-
-4. Plantear explicaciones al problema: hipótesis.
-
-5. Organizar una estrategia para probar, o invalidar, las hipótesis.
-
-6. Aplicar la estrategia, entender y validar los resultados. Asegurar la replicabilidad de la estrategia. 
-
-7. Elaborar síntesis de lo actuado; proponer explicaciones a lo encontrado; y enviar recomendaciones.
-
-Hay muchas opciones para la _estrategia_ señalada en el punto 5. La elección de las mismas dependerá de la preparación del analista. En este curso, te daremos conocimientos para que no desestimes **el camino basado en datos y/o evidencias empíricas**. De ahí que parte de tu proyecto para este curso está basado en desarrollar los puntos anteriores.
-
-  - Con tu hipótesis (punto **4**), debes organizar un archivo de datos (punto **5**), donde, al menos, una de las columnas sea la variable que representa el problema observado (*la dependiente*), por ejemplo: muertos por Covid, resultados de exámenes escolares, etc.; y las otras  (las _independientes_) sean variables sugeridas en la revisión de la literatura como posibles influencias para el comportamiento de la variable dependiente. Refresca estos conceptos con esta [lectura](http://cienciapoliticauned1.blogspot.com/). 
-  - Con esos datos, prueba tu hipótesis con  un análisis de regresión (punto **6**). Hay varios pasos a seguir, y lo veremos en las primeras sesiones.
-  
-  - Todos deben colaborar con diversos datos, pues luego debes usarlos para análisis de conglomerados y factorial. Aquí necesitan diversas independientes. Éstas pueden ser dos grupos, uno que represente indicadores similares entre sí (vea el [índice de democracia](https://es.wikipedia.org/wiki/%C3%8Dndice_de_democracia)) o disímiles entre sí (vea el [índice de desarrollo humano](https://es.wikipedia.org/wiki/%C3%8Dndice_de_desarrollo_humano)). Esto debe permitirte un mejor análisis de regresión.
-  
-  - Las investigaciones, en general, y las políticas, en particular, deben ser auditables. De ahí que debes organizar todo el trabajo anterior en un repositorio en la “nube”. Saca tu cuenta en [GitHub](https://github.com/), e instala el [cliente](https://desktop.github.com/) en tu computadora a la vez.
-  
-  - RStudio te permitirá publicar tu trabajo final en un formato académico moderno usando _markdown_. Ten este tutorial a la mano todo el tiempo:[https://rmarkdown.rstudio.com/index.html](https://rmarkdown.rstudio.com/index.html). Esto será tu último entregable.
-  
-
-Para mayores detalles, revisa el SILABO presente en Paideia y el campus virtual PUCP.
+2. Se plantea hipótesis respecto a qué se relaciona con la variabilidad de la variable de interés. Las hipótesis se formula no antes de haber revisado la literatura. En esta etapa hace uso de análisis bivariado o multivariado. Esta etapa se enriquece si está actualizado en las teorías que proponen cierta asociación de la variable de interés con otras variables.
 
 
-En esta sesión deseo que entiendas por qué es necesario ir más allá de la correlación (_Pearson_, _Spearman_, etc.) o las diferencias de valores centrales (_t test_, _kruska wallis_, etc.). Esta necesidad de ir más allá trae una técnica conocida como la regresión. 
+3. Aplica la técnica estadística que corresponda, tal que verifique la hipótesis que se planteó. 
 
-La sesión va en dos partes:
+4. Interpretado los resultados obtenidos.
 
-* [De Correlación a Regresión](#corr)
-* [Regresión Lineal](#rlin)
+5. Elabora síntesis de lo actuado; propone explicaciones a lo encontrado; y elabora recomendaciones.
+
+Hay muchas opciones para las _técnicas_ señaladas en el punto 4. La elección de las mismas dependerá de la preparación del analista. Esta sesión te guiará para que:
+
+1. Recuerdes cómo y para qué hacer exploración univariada ([ir](#eda))
+2. Recuerdes cómo y para qué hacer análisis bivariada ([ir](#corr)).
+3. Introducir el concepto (y necesidad) de la regresión multivariada ([ir](#rlin)).
 
 
+<a id='eda'></a>
+
+## I. Explorando la Variable de interés
+
+Supongamos que estás interesado en la "situación de los locales escolares en el Perú". Ese simple interés te lleva a buscar datos para saber tal situación. De pronto te encuentras con estos datos (basado en [CEPLAN](https://www.ceplan.gob.pe/informacion-de-brechas-territoriales/)): 
+
+<iframe width="800" height="400" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vS2ZSNM8BIZtoufVTO4Mw3ZmTWW1rAAtsGzFg0shHTJXX-3GmtLsgU-Nqkw5RzDgrNX31GTC9L7LnEz/pubhtml?"></iframe>
+
+Imaginemos que estos datos son lo 'mejor' que podrás conseguir:
+
+* Variable: Locales Publicos en buen estado:
+    - Representación: Porcentaje.
+    - Corte: Transversal - sólo 2018.
+
+* Unidad de Observación: Local Público
+
+* Unidad de Análisis: Departamento
 
 
+Teniendo ello en claro, pasemos a explorar los datos:
 
+1. Carga de datos:
+
+Si los datos están en GoogleDrive, puedes leerlos desde ahí:
+
+```{r}
+rm(list = ls()) # limpiar el working environment
+
+linkADrive='https://docs.google.com/spreadsheets/d/e/2PACX-1vS2ZSNM8BIZtoufVTO4Mw3ZmTWW1rAAtsGzFg0shHTJXX-3GmtLsgU-Nqkw5RzDgrNX31GTC9L7LnEz/pub?gid=0&single=true&output=csv'
+
+estadoLocales=read.csv(linkADrive)
+
+head(estadoLocales)
+```
+
+La vista preliminar nos muestra varias columnas, pero la de nuestro interés es la última columna de la derecha. A esta altura, antes de explorar los datos de manera estadística, debemos primero verificar cómo R ha intepretado el **tipo** de datos:
+
+```{r}
+str(estadoLocales)
+```
+La columna de interés es de *tipo numérico*, y R también lo tiene intrepretado así. 
+
+2. Tablas, Gráficos, y Estadígrafos
+
+Si los datos están en el tipo adecuado, puede iniciarse la exploración estadística.
+
+2.1 Tablas
+
+Tenemos 25 observaciones a nivel departamental. La **tabla de frecuencias** suele ser una manera básica de ver cómo se distribuyen los datos:
+
+```{r}
+library(DescTools)
+
+TF_locales=DescTools::Freq(estadoLocales$LOCALES_PUB_BUENESTADO_2018)
+TF_locales
+
+```
+
+La columna "level" muestra intervalos en los cuáles se ha _partido_ o _cortado_ los valores encontrados en la variable. Nótese que desde el segundo intervalo, éste está abierto a la izquierda. 
+
+
+2.1 Gráficas
+
+La tabla de frecuencias previa puede complementarse con un histograma:
+
+```{r}
+hist(estadoLocales$LOCALES_PUB_BUENESTADO_2018)
+```
+Las funciones **Freq()** y la **hist()** calculan los mismos intervalos. Si usas **ggplot** podrías obtener algo diferente:
+
+```{r}
+library(ggplot2)
+
+baseHist= ggplot(data=estadoLocales, aes(x=LOCALES_PUB_BUENESTADO_2018))
+histoLocales=baseHist + geom_histogram(bins=8)
+histoLocales
+```
+```{r}
+data_histoLocales=ggplot_build(histoLocales)$data[[1]]
+data_histoLocales
+```
+```{r}
+data_histoLocales[,c(4,5,2)]
+```
+Another important plot is the **boxplot**:
+```{r}
+boxplot(estadoLocales$LOCALES_PUB_BUENESTADO_2018)
+```
+Y en ggplot:
+```{r}
+baseBox= ggplot(data=estadoLocales, aes(y=LOCALES_PUB_BUENESTADO_2018))
+boxLocales=baseBox + geom_boxplot()
+boxLocales
+```
+
+2.3 Estadígrafos
+
+La manera más rápida de ver los estadígrafos es con el comando **summary()**:
+
+```{r}
+summary(estadoLocales$LOCALES_PUB_BUENESTADO_2018)
+```
+Este resumen incluye medidas de centralidad, pero no de dispersión, ni de kurtosis ni de asimetría. Para ello tenemos otras librerías:
+
+```{r}
+library(psych)
+moreStatsLocales=psych::describe(estadoLocales$LOCALES_PUB_BUENESTADO_2018)
+moreStatsLocales
+```
+O...
+```{r}
+t(moreStatsLocales)
+```
+Asimismo, no sabemos los valores que salieron **atípicos** en el boxplot, lo cual podemos recuperar así:
+
+```{r}
+data_boxLocales=ggplot_build(boxLocales)$data[[1]]
+data_boxLocales
+```
+O de manera más precisa:
+
+```{r}
+data_boxLocales$outliers
+```
+Nota la utilidad de los bigotes de las cajas, cuando hay atípicos:
+
+```{r}
+data_boxLocales[c('ymin','ymax')]
+```
+En este caso, sabemos que los valores que exceden 31.4 serán considerados atípicos.
+
+
+```{r}
+meanOfVar=mean(estadoLocales$LOCALES_PUB_BUENESTADO_2018,na.rm = TRUE)
+sdOfVar=sd(estadoLocales$LOCALES_PUB_BUENESTADO_2018,na.rm = TRUE)
+
+baseHist +
+  geom_histogram(aes(y = ..density..),
+                 bins=8,
+                 fill='green') +
+  stat_function(fun = dnorm,
+                args = list(mean = meanOfVar,
+                            sd = sdOfVar),
+                col = "blue",
+                linewidth = 5)
+```
+
+```{r}
+ggplot(estadoLocales, aes(sample=LOCALES_PUB_BUENESTADO_2018)) +
+  stat_qq() + 
+  stat_qq_line()
+```
+```{r}
+library(ggpubr)
+ggqqplot(estadoLocales$LOCALES_PUB_BUENESTADO_2018)
+```
+```{r}
+shapiro.test(estadoLocales$LOCALES_PUB_BUENESTADO_2018 )
+```
+```{r}
+ks.test(estadoLocales$LOCALES_PUB_BUENESTADO_2018,'pnorm' )
+```
 
 <a id='corr'></a>
 
