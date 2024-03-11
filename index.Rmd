@@ -32,6 +32,10 @@ ____
 
 ____
 
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'))
+```
+
 ## El _Pipeline_ del Analista Político
 
 Podemos proponer que los _analistas_ existen para brindar __explicaciones__ y __recomendaciones__ sobre algún asunto de interés. Por otro lado, el _decisor_ es responsable de eligir un curso de acción sabiendo que el analista le ha dado __información incompleta__. Ya el _gestor_ se encarga de implementar  las decisiones; esa implementación traerá nueva información y el analista vuelve a su trabajo.
@@ -102,77 +106,55 @@ La columna de interés es de *tipo numérico*, y R también lo tiene intrepretad
 
 Si los datos están en el tipo adecuado, puede iniciarse la exploración estadística.
 
-Tenemos 25 observaciones a nivel departamental. La **tabla de frecuencias** suele ser una manera básica de ver cómo se distribuyen los datos:
-
-```{r}
-library(DescTools)
-
-TF_locales=DescTools::Freq(estadoLocales$buenEstado)
-TF_locales
-
-```
-
-La columna "level" muestra intervalos en los cuáles se ha _partido_ o _cortado_ los valores encontrados en la variable. Nótese que desde el segundo intervalo, éste está abierto a la izquierda. 
-
-
-La tabla de frecuencias previa puede complementarse con un histograma:
-
-```{r}
-hist(estadoLocales$buenEstado)
-```
-
-Las funciones **Freq()** y la **hist()** calculan los intervalos con el mismo algoritmo. Si usas **ggplot** obtenemos algo diferente:
-
-```{r}
-library(ggplot2)
-
-baseHist= ggplot(data=estadoLocales, aes(x=buenEstado))
-histoLocales=baseHist + geom_histogram(bins=8)
-histoLocales
-```
-
-El algoritmo que usa **ggplot** trae otro resultado. Usando **ggplot_build** podemos ver los datos:
-
-```{r}
-data_histoLocales=ggplot_build(histoLocales)$data[[1]]
-data_histoLocales
-```
-
-Tomemos lo necesario de la tabla anterior para representar cada intervalo y su frecuencia absoluta:
-
-```{r}
-data_histoLocales[,c("xmin","xmax","count")]
-```
-
-La exploración de variables numéricas debe incluir el uso del **boxplot**:
-
-```{r}
-baseBox= ggplot(data=estadoLocales, aes(y=buenEstado))
-boxLocales=baseBox + geom_boxplot()
-boxLocales
-```
-
-El boxplot revela los cuartiles, y lo más importante, la presencia de atípicos (outliers). 
-
-La manera más rápida de ver los estadígrafos es usando el comando **summary()**:
+Tenemos 25 observaciones a nivel departamental. La manera más rápida de ver los estadígrafos es usando el comando **summary()**:
 
 ```{r}
 summary(estadoLocales$buenEstado)
 ```
-
-Este resumen incluye medidas de centralidad y posición, pero no de dispersión, ni de kurtosis, ni de asimetría. Para ello tenemos, entre otras opciones, la función _Desc_ del paquete _DescTools_:
+Pero, nos faltaría algunos estadígrafos, que podemos añadir así:
 
 ```{r}
 library(DescTools)
-moreStatsLocales=DescTools::Desc(estadoLocales$buenEstado)
-moreStatsLocales
+
+allStats=c(summary(estadoLocales$buenEstado),
+  sd=sd(estadoLocales$buenEstado),
+  skew=Skew(estadoLocales$buenEstado),
+  kurt=Kurt(estadoLocales$buenEstado),
+  cv=CoefVar(estadoLocales$buenEstado))
+allStats
+```
+ A esta altura, los gráficos que necesitamos son el histograma:
+ 
+```{r}
+library(ggplot2)
+
+base=ggplot(data=estadoLocales,
+            aes(x=buenEstado))
+histogram= base + geom_histogram(aes(y = after_stat(density)),
+                 colour = 1, fill = "white",bins=10) +  
+    stat_function(fun = dnorm,
+                  args = list(mean = allStats['Mean'],
+                              sd = allStats['sd']),col='red')
+    
+histogram
+```
+
+Y el boxplot:
+
+```{r}
+base=ggplot(data=estadoLocales,
+            aes(y=buenEstado))
+boxplot=base + geom_boxplot()
+
+boxplot
 ```
 
 
-A esta altura, no sabemos los valores que salieron **atípicos** en el boxplot, lo cual podemos recuperar con *ggplot_build*:
+A esta altura sólo falta identificar a los atípicos en el boxplot, lo cual podemos recuperar con *ggplot_build*:
 
 ```{r}
-data_boxLocales=ggplot_build(boxLocales)$data[[1]]
+
+data_boxLocales=ggplot_build(boxplot)$data[[1]]
 data_boxLocales
 ```
 Los outliers están en una lista, por lo que debemos escribir:
@@ -187,32 +169,6 @@ data_boxLocales[c('ymin','ymax')]
 ```
 En este caso, sabemos que los valores que exceden 31.4 serán considerados atípicos.
 
-A esta altura, tienes en claro que hay asimetría, y quisieras ver si el histograma se aleja de la normalidad:
-
-```{r}
-library(ggh4x)
-
-baseHist +
-  geom_histogram(aes(y =after_stat(density)),bins=8) +
-  stat_theodensity(colour = "red") 
-
-```
-
-El análisis de la normalidad también puede incluir el **qqplot**:
-
-```{r}
-library(ggpubr)
-ggqqplot(estadoLocales$buenEstado)
-```
-
-Lo cuál se acompaña con los tests de normalidad (Ho: data es normal):
-
-```{r}
-shapiro.test(estadoLocales$buenEstado )
-```
-```{r}
-ks.test(estadoLocales$buenEstado,'pnorm')
-```
 
 Hasta aquí, podrias sustentar que los valores de la variable buen estado de colegios públicos a nivel regional se distribuyen asimétricamente, con una dispersión baja, y con presencia de valores atípicos altos.
 
@@ -257,18 +213,9 @@ EstPea
 Como son _dos_ variables de tipo _numérico_ la estrategia a seguir es el análisis de correlación. Veamos este **scatterplot**:
 
 ```{r, warning=FALSE, message=FALSE, echo=TRUE}
-
-library(ggplot2)
-
+library(ggrepel)
 base=ggplot(data=EstPea, aes(x=peaOcupada, y=buenEstado))
 scatter = base + geom_point()
-scatter
-```
-
-Como tenemos pocos casos, podemos poner texto:
-
-```{r}
-library(ggrepel)
 scatterText = scatter + geom_text_repel(aes(label=DEPARTAMENTO),size=2)
 scatterText
 ```
@@ -332,39 +279,7 @@ base + geom_boxplot(notch = T) +  geom_jitter(color="black", size=0.4, alpha=0.9
 
 Los boxplots tienen un _notch_ flanqueando a la _mediana_, para sugerir igualdad de medianas si éstos se intersectan; de ahi que parece no haber diferencia sustantiva entre las categorías.
 
-Una alternativa al boxplot seria las barras de error:
-```{r}
-ggpubr::ggerrorplot(data=EstPeaPob, x='populoso', y='buenEstado')
-```
-
-En este último caso, si las líneas (denotado por las barras de error de la media) se interceptan, sugeriría que los valores medios (en este caso la _media_) podrían ser iguales.
-
-Verificar si hay o no igualdad entre distribuciones depende si las variables se distribuyen o no de manera normal por grupo:
-
-
-```{r}
-
-ggplot(data=EstPeaPob, aes(x=buenEstado)) +
-  geom_histogram(aes(y = ..density..),bins=8) +
-  ggh4x::stat_theodensity(colour = "red") +
-  facet_wrap(~ populoso,ncol = 1)
-```
-
-
-Nota que los histogramas de la data _real_ tienen encima la curva _normal_ que _idealmente_ tendría esa data. La lejanía entre ellos, sugeriría no normalidad.
-
-
-Volvamos a usar un qqplot para explorar la presencia/ausencia de normalidad por grupo:
-
-```{r, warning=FALSE, message=FALSE, echo=TRUE, eval=TRUE}
-# se sugiere normalidad si los puntos no se alejan de la diagonal.
-
-library(ggpubr)
-ggqqplot(data=EstPeaPob,x="buenEstado") + facet_grid(~ populoso)
-```
-
-
-Como ello no es fácil de discernir visualmente, complementemos el análisis con los tests de normalidad. Usemos _Shapiro-Wilk_ en cada grupo:
+Verificar si hay o no igualdad entre distribuciones depende si las variables se distribuyen o no de manera normal por grupo. Como ello no es fácil de discernir visualmente, complementemos el análisis con los tests de normalidad. Usemos _Shapiro-Wilk_ en cada grupo:
 
 
 ```{r, warning=FALSE, message=FALSE, echo=TRUE}
@@ -412,7 +327,7 @@ _____
 <a id='rlin'></a>
 
 
-## Regresión Lineal
+## III. Regresión Lineal
 
 La regresión es una técnica donde hay que definir una variable dependiente y una o más independientes. Las independientes pueden tener rol predictor, dependiendo del diseño de investigación, aunque por defecto tiene un rol explicativo. 
 
