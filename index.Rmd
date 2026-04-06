@@ -1,8 +1,9 @@
 ---
-title: ""
+title: ''
 output:
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 <img src="https://imgur.com/T5KQ7qg.jpg" width="400"/>
@@ -15,12 +16,14 @@ output:
 
 <br>
 
-Profesor:[Dr. José Manuel MAGALLANES REYES, Ph.D](http://www.pucp.edu.pe/profesor/jose-manuel-magallanes/" target="_blank) <br>
+Profesor:[Dr. José Manuel MAGALLANES REYES, Ph.D](http://www.pucp.edu.pe/profesor/jose-manuel-magallanes/%22%20target=%22_blank) <br>
 
 -   Profesor Principal del Departamento de Ciencias Sociales, Sección de Ciencia Política y Gobierno.
 
 -   [Oficina 223](https://goo.gl/maps/xuGeG6o9di1i1y5m6) - Edificio CISEPA / ECONOMIA / CCSS
+
 -   Telefono: (51) 1 - 6262000 anexo 4302
+
 -   Correo Electrónico: [jmagallanes\@pucp.edu.pe](mailto:jmagallanes@pucp.edu.pe)
 
 <a id='beginning'></a>
@@ -37,7 +40,12 @@ Profesor:[Dr. José Manuel MAGALLANES REYES, Ph.D](http://www.pucp.edu.pe/profes
 
 </center>
 
-<center><a href="https://doi.org/10.5281/zenodo.7015029"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7015029.svg" alt="DOI"/></a></center>
+<center>
+  <a href="https://doi.org/10.5281/zenodo.7015029">
+    <img src="zenodo-doi.svg" width="150">
+  </a>
+</center>
+
 
 ------------------------------------------------------------------------
 
@@ -73,7 +81,7 @@ Hay muchas opciones para las *técnicas* señaladas en el punto 3. La elección 
 
 Supongamos que estás interesado en la "situación de los locales escolares en el Perú". Ese simple interés te lleva a buscar datos para saber tal situación. De pronto te encuentras con estos datos (basado en [CEPLAN](https://www.ceplan.gob.pe/informacion-de-brechas-territoriales/)):
 
-<iframe width="800" height="400" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vS2ZSNM8BIZtoufVTO4Mw3ZmTWW1rAAtsGzFg0shHTJXX-3GmtLsgU-Nqkw5RzDgrNX31GTC9L7LnEz/pubhtml?">
+<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vS38GkQNnDd5Gc-vau9zMYo9wf1_CzuDYYlO3DdKbGWjwEahP2DWn_rvfqWsd_yg3maE2_rz3la0_gG/pubhtml?widget=true&amp;autoplay=false&amp;offerviewer=true&amp;showtitle=true&amp;showbrand=false&amp;start=0&amp;interactivity=all" height="500" width="800" style="border: 1px solid #464646;" allowfullscreen data-external="1">
 
 </iframe>
 
@@ -97,7 +105,7 @@ Si los datos están en GoogleDrive, puedes leerlos desde ahí:
 ```{r}
 rm(list = ls()) # limpiar el working environment
 
-linkADrive='https://docs.google.com/spreadsheets/d/e/2PACX-1vS2ZSNM8BIZtoufVTO4Mw3ZmTWW1rAAtsGzFg0shHTJXX-3GmtLsgU-Nqkw5RzDgrNX31GTC9L7LnEz/pub?gid=0&single=true&output=csv'
+linkADrive='https://docs.google.com/spreadsheets/d/e/2PACX-1vS38GkQNnDd5Gc-vau9zMYo9wf1_CzuDYYlO3DdKbGWjwEahP2DWn_rvfqWsd_yg3maE2_rz3la0_gG/pub?gid=1766987194&single=true&output=csv'
 
 estadoLocales=read.csv(linkADrive)
 
@@ -192,25 +200,9 @@ Hasta aquí, podrias sustentar que los valores de la variable buen estado de col
 Consideremos que nos interesa explorar la posible relación entre nuestra variable de interés y la PEA ocupada. Traigamos esa variable:
 
 ```{r}
-linkPea="https://docs.google.com/spreadsheets/d/e/2PACX-1vS2ZSNM8BIZtoufVTO4Mw3ZmTWW1rAAtsGzFg0shHTJXX-3GmtLsgU-Nqkw5RzDgrNX31GTC9L7LnEz/pub?gid=1924082402&single=true&output=csv"
+linkPea="https://docs.google.com/spreadsheets/d/e/2PACX-1vS38GkQNnDd5Gc-vau9zMYo9wf1_CzuDYYlO3DdKbGWjwEahP2DWn_rvfqWsd_yg3maE2_rz3la0_gG/pub?gid=1512217559&single=true&output=csv"
 peaOcu=read.csv(linkPea)
 head(peaOcu)
-```
-
-Nótese que los valores numéricos han sido interpretados como texto. Las comas lo han causado, pero podemos eliminarlas así:
-
-```{r}
-gsub(pattern = ",",replacement = "",peaOcu$peaOcupada)
-```
-
-Usemos ese código para volver numérica esa columna:
-
-```{r}
-peaOcu$peaOcupada=gsub(pattern = ",",replacement = "",peaOcu$peaOcupada)
-peaOcu$peaOcupada=as.numeric(peaOcu$peaOcupada)
-
-# veamos
-str(peaOcu)
 ```
 
 Los datos de la PEA están en una tabla diferente, por lo que debemos juntar (merge) ambas tablas, usando como *key* alguna columna común en ambas:
@@ -257,7 +249,7 @@ Hasta aquí, dudamos que esas variables estén correlacionadas.
 Otro caso importante es cuando analizamos nuestra variable versus una variable categórica. Por ejemplo, saber si se distribuye igual según una región sea "populosa" o no lo sea. Traigamos los datos de población:
 
 ```{r}
-linkPobla="https://docs.google.com/spreadsheets/d/e/2PACX-1vS2ZSNM8BIZtoufVTO4Mw3ZmTWW1rAAtsGzFg0shHTJXX-3GmtLsgU-Nqkw5RzDgrNX31GTC9L7LnEz/pub?gid=1758328391&single=true&output=csv"
+linkPobla="https://docs.google.com/spreadsheets/d/e/2PACX-1vS38GkQNnDd5Gc-vau9zMYo9wf1_CzuDYYlO3DdKbGWjwEahP2DWn_rvfqWsd_yg3maE2_rz3la0_gG/pub?gid=1359782530&single=true&output=csv"
 poblas=read.csv(linkPobla)
 head(poblas)
 ```
